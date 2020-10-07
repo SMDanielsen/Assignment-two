@@ -26,7 +26,7 @@ library(ggpubr)
 
 
 #Introduksjon
-
+I denne oppgaven vil vi i hovedsak se på om høyde påvirker inntekten. For å finne ut dette har vi tatt i bruk studien/datasettet kalt for modelr. Vi har også sett på andre variabler som kjønn og sivilstatus, for å finne ut om disse faktorene har en påvirkning på inntekten. 
 
 #Statistikk
 
@@ -57,10 +57,11 @@ ggplot(data=my_data, mapping=aes(x= height, y=income)) +
 
 ```
   
-Ser variablene ut til å være normal-fordelte eller kan en transformasjon være på sin plass?
+Her ser vi hsammenhengen mellom høyde og inntekt. 
+De ulike prikkene illustrerer observasjonenen til studien som er blitt tatt. 
+De øverste prikkene er de som har høyest lønn.
+Observasjonen øverst i diagrammet illustrerer gjennomsnittslønnen til de som ligger på et veldig høyt lønnsnivå.
 
-Hvor kommer de svarte prikkene på rekke øverst i geom_point plottet fra?
-De øverste prikkene er de som har høyest lønn. De har valgt å ta gjennomsnittet av de som har høyest lønn, derfor er de på likt nivå øverst i histogrammet. 
 
 ```{r}
 ggplot(data=my_data, mapping=aes(x= height, y=income)) +
@@ -82,7 +83,7 @@ ggplot(data=my_data)+
  
 ```
 Videre ville vi se på varibelen inntekt i et density plot, hvor vi fant ut at denne ikke er normalfordelt.
-Det vil i dette tilfellet være en fordel å gjøre en tranformasjon. 
+ 
 
 ```{r}
 
@@ -97,17 +98,16 @@ hist(my_data_utvidet$income)
 hist(my_data_utvidet$logincome)
 
 ```
+Ettersom inntekt ikke var normalfordelt, har vi nå valgt å foreta en tranformasjon.
 
+#Sammenligning av menn og kvinner
 ```{r}
 ggplot()+
   geom_point(data=my_data, mapping=aes(x = height, y = income, colour=factor(sex)))
 
 ```
 
-I dette histogrammet har vi delt opp i kvinner og menn, for å se om det har en betydning på inntekt. 
-På de prikkene øverst i histogrammet er det flest menn. 
-Kvinnene som har vært med i undersøkelsen er relativt lavere enn mennene.
-Kurven nedover på venstre side er ikke så bratt som på høyre side.
+I dette histogrammet har vi delt opp variablene kvinner og menn, for å se om det har en betydning på inntekt. Man kan se at der er flest menn på prikkene øverst i histogrammet og at det er de som har høyest lønn.
 
 
 ```{r}
@@ -129,14 +129,10 @@ Ser på grafen til høyre ser vi at flertallet av kvinner har en høyde på 60 t
 Man kan også se at det er flere menn enn kvinner som har høy inntekt. 
 
 
-```{r}
-summary(my_data)
-
-```
 
 ```{r}
 sex<-pull(my_data[,6])
-
+sex
 ```
 
 ```{r}
