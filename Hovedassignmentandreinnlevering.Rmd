@@ -85,11 +85,16 @@ Videre ville vi se på varibelen inntekt i et density plot, hvor vi fant ut at d
 Det vil i dette tilfellet være en fordel å gjøre en tranformasjon. 
 
 ```{r}
-my_data_income<- my_data%>%
-  dplyr::filter(income>30000)%>% 
-dplyr::mutate(income_transf=log(my_data_income))+
-income_transfer<- log(my_data_income)
-  
+
+ovr_grense <- 300000
+ned_grense <- 0
+my_data_utvidet <- my_data %>%
+  dplyr::filter(income>ned_grense) %>%
+  dplyr::filter(income<ovr_grense)%>%
+  dplyr::mutate(logincome=log(income))
+
+hist(my_data_utvidet$income)
+hist(my_data_utvidet$logincome)
 
 ```
 
