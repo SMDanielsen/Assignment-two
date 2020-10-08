@@ -57,7 +57,7 @@ ggplot(data=my_data, mapping=aes(x= height, y=income)) +
 
 ```
   
-Her ser vi hsammenhengen mellom høyde og inntekt. 
+Her ser vi sammenhengen mellom høyde og inntekt. 
 De ulike prikkene illustrerer observasjonenen til studien som er blitt tatt. 
 De øverste prikkene er de som har høyest lønn.
 Observasjonen øverst i diagrammet illustrerer gjennomsnittslønnen til de som ligger på et veldig høyt lønnsnivå.
@@ -132,15 +132,6 @@ Man kan også se at det er flere menn enn kvinner som har høy inntekt.
 
 ```{r}
 sex<-pull(my_data[,6])
-sex
-```
-
-```{r}
-
-ggplot()+
-  geom_point(data=my_data,mapping= aes(x=height, y=income),alpha=0.3, shape=factor(if_else(sex=="male", "male","female")), size=2) +
-  labs(colour = "marital",alpha= "height/income", shape=sex)
-
 ```
 
 
@@ -148,20 +139,39 @@ ggplot()+
 #Regresjon
 ggplot(data=my_data, mapping=aes(x=height, y=income))+
   geom_point()+
-  geom_smooth(method="lm", se=FALSE)+
-  geom_smooth(method= MASS::rlm, colour="Red", se=FALSE)
+  geom_smooth(method="lm", se=FALSE)
+
+  
+
 ```
 
 ```{r}
+View(my_data_filter)
+my_data_filter <- my_data %>% dplyr::filter(income<300000) %>%
+dplyr::filter(income>0) %>%
+dplyr::mutate(lnincome=log(income)) %>%
+dplyr::mutate(lnheight=log(height)) 
 
-g<- ggplot(my_data, aes(height,income))
-q + geom_point()
-q + geom_point(position="jitter")
 
-q + geom_jitter(aes(colour=sex))
+q1 <- ggplot(data=my_data_filter, aes(x=height,y=income)) + 
+geom_point() + 
+geom_jitter() +
+geom_smooth(method = "lm")
+q2 <- ggplot(data=my_data_filter, aes(x=lnheight,y=lnincome)) + 
+geom_point() + 
+geom_jitter() +
+geom_smooth(method = "lm")
+q2
+
+library(gridExtra)
+grid.arrange(q1,q2, nrow=1)
+model_1 <- lm(my_data_filter$income ~ my_data_filter$height)
+model_2 <- lm(my_data_filter$lnincome ~ my_data_filter$lnheight)
+summary(model_1)
+summary(model_2)
 
 ```
-
+Den til høyre illustrerer prosentandel. 
 
 ```{r}
 box <- subset(heights, income > 0)
@@ -192,9 +202,10 @@ ggplot(box, mapping= aes(x=heightInt, y=income, colour=factor(marital)))+
 Hvis vi sammenligner de to boxene kan vi se at de ligger høyt på inntekt er menn, og det er et høyt antall av dem som er skilte.
 
 ```{r}
-ggplot(data=my_data, mapping=aes(x=height, y=income, colour=factor(age)))+
-  facet_grid(sex ~marital)+
-  geom_point() 
+my_data_adj <- my_data %>% dplyr::filter(income<300000 & income >0)
+ggplot(data=my_data_adj)+
+facet_grid(sex ~marital)+
+geom_point(aes(x=age, y=income))
 ```
 Ved å ta i bruk facet_grid kan vi se på om alder og sivilstatus har noe å si for hvor mye man tjener. 
 ut i fra dataene kan man se en sammenheng mellom inntekt og sivilstatus. 
@@ -203,9 +214,13 @@ Vi kan også se at mange av de som har høy inntekt har en alder på 50+.
 
 
 ```{r}
-summary(lm(income~height, data=heights))
+summary(lm(income~height + sex + age+ education, data=heights))
+
+
+
 ```
 En ekstra inch vil gi en inntektseøkning på $2981. 
+Vi kan se på at R-squerad er relatvit lavt så det er ikke 
 
 #Resultater
 
