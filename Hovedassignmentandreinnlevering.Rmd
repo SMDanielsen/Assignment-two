@@ -139,17 +139,13 @@ sex<-pull(my_data[,6])
 #Regresjon
 ggplot(data=my_data, mapping=aes(x=height, y=income))+
   geom_point()+
-<<<<<<< HEAD
+ylim(0,200000) +
   geom_smooth(method="lm", se=FALSE)
 
-  
-
-=======
-  geom_smooth(method="lm", se=FALSE)+
-  geom_smooth(method= MASS::rlm, colour="Red", se=FALSE)+
-ylim(0,200000)
->>>>>>> 1c2854c7d2e3e949569fb21547c118b9baa00af2
 ```
+Her ser vi at høyde har en postiv korrelasjon på inntekt. 
+
+
 
 ```{r}
 View(my_data_filter)
@@ -177,7 +173,9 @@ summary(model_1)
 summary(model_2)
 
 ```
-Den til høyre illustrerer prosentandel. 
+Den til høyre illustrerer prosentandel.
+
+
 
 ```{r}
 box <- subset(heights, income > 0)
@@ -214,19 +212,26 @@ facet_grid(sex ~marital)+
 geom_point(aes(x=age, y=income))
 ```
 Ved å ta i bruk facet_grid kan vi se på om alder og sivilstatus har noe å si for hvor mye man tjener. 
-ut i fra dataene kan man se en sammenheng mellom inntekt og sivilstatus. 
-Det ser ut til at de som entene er single, gift eller skilt, har en høyere inntekt. 
+Ut i fra dataene kan man se en sammenheng mellom inntekt og sivilstatus. 
+Det ser ut til at de som er single, gift eller skilt, har en høyere inntekt. 
 Vi kan også se at mange av de som har høy inntekt har en alder på 50+.
 
 
 ```{r}
-summary(lm(income~height + sex + age+ education, data=heights))
+summary(lm(income~height, data=heights))
 
 
 
 ```
 En ekstra inch vil gi en inntektseøkning på $2981. 
-Vi kan se på at R-squerad er relatvit lavt så det er ikke 
+Vi kan se på at R-squerad er relatvit lavt, 4,7%. 
+Med den informasjonen ser vi at høyde har lav betydning på inntekten. 
+
+```{r}
+summary(lm(income~sex + height + education + marital, data=heights))
+```
+
+
 
 #Resultater
 
