@@ -149,7 +149,8 @@ ggplot()+
 ggplot(data=my_data, mapping=aes(x=height, y=income))+
   geom_point()+
   geom_smooth(method="lm", se=FALSE)+
-  geom_smooth(method= MASS::rlm, colour="Red", se=FALSE)
+  geom_smooth(method= MASS::rlm, colour="Red", se=FALSE)+
+ylim(0,200000)
 ```
 
 ```{r}
