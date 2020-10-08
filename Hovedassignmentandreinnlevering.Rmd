@@ -139,10 +139,16 @@ sex<-pull(my_data[,6])
 #Regresjon
 ggplot(data=my_data, mapping=aes(x=height, y=income))+
   geom_point()+
+<<<<<<< HEAD
   geom_smooth(method="lm", se=FALSE)
 
   
 
+=======
+  geom_smooth(method="lm", se=FALSE)+
+  geom_smooth(method= MASS::rlm, colour="Red", se=FALSE)+
+ylim(0,200000)
+>>>>>>> 1c2854c7d2e3e949569fb21547c118b9baa00af2
 ```
 
 ```{r}
