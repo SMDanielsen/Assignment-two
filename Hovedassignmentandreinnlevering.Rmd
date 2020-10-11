@@ -216,7 +216,7 @@ Ut i fra dataene kan man se en sammenheng mellom inntekt og sivilstatus.
 Det ser ut til at de som er single, gift eller skilt, har en høyere inntekt. 
 Vi kan også se at mange av de som har høy inntekt har en alder på 50+.
 
-
+#Resultater
 ```{r}
 summary(lm(income~height, data=heights))
 
@@ -225,18 +225,12 @@ summary(lm(income~height, data=heights))
 ```
 En ekstra inch vil gi en inntektseøkning på $2981. 
 Vi kan se på at R-squerad er relatvit lavt, 4,7%. 
-Med den informasjonen ser vi at høyde har lav betydning på inntekten. 
+Med den informasjonen ser vi at høyde har lav betydning på inntekten, dermed kan vi konkludere med at lønn og høyde ikke har en sammenheng.  
+
 
 ```{r}
-summary(lm(income~sex + height + education + marital, data=heights))
-```
+summary(lm(income~sex + height + education, data=heights))
+``` 
 
-
-
-#Resultater
-
-
-
-#Konklusjon
 
 
