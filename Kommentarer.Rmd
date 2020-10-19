@@ -1,0 +1,41 @@
+---
+title: "Kommentarer"
+output:
+  prettydoc::html_pretty:
+    theme: cayman
+---
+
+#### Ting som kan forbedres i bruken av R:
+
+1. Sjekk skrivefeil i YAML, og *fontsize* lagt inn dobbelt.
+1. Husk mellomrom etter # ved overskrifter.
+1. Husk *enter* for å hoppe til neste linje etter hvert punktum.
+(Gjør det lettere å identifisere feil/endringer ved commits.)
+Dette var kun gjort i deler av dokumentet.
+1. Husk å navngi chunks. 
+1. For å bli kvitt *scientific notation*, benytt `options(scipen = 999)` i setup-chunken.
+1. Bruk `{r setup, message = F, echo = F}` for å skjule unødvendig pakkeinformasjon i sluttdokumentet.
+1. For å skjule chunks i sluttdokumentet, bruk `echo = F` eller koden som er lagt inn i setup chunken. 
+1. For ryddigere chunks, hopp til neste linje etter komma.
+1. Anbefaler å rydde i mappen/på Github da det var vanskelig å finne korrekt fil å gå gjennom.
+1. Slette branches fra Github etter at de er *merget* til master.
+1. `mutate()` funksjonen i dplyr kan hjelpe dere å begrense antallet datasett, da de er ryddigere og lettere å holde styr på ved å opprette nye kolonner i eksisterende datasett.
+
+#### Ting som bør ses på i forhold til forståelse av plots og analyse:
+
+1. Skriv gjerne engelske ord/begrep i *kursiv*.
+1. Benytte korrekt plot, i henhold til tekst. 
+(2 eks der dere refererer til histogram, der det det er laget vanlige plots istedet for histogram.)
+1. Bedre forklaring av hva de forskjellige plotene betyr. 
+Transformasjonsplottene (linje 94 - 106) er uforståelige, da de ikke er forklart og heller ikke gir noe mening.
+1. Den siste regresjonsmodellen er ikke forklart.
+1. Generelt bedre forståelse av resultatene, dette vil også være til stor hjelp i økonometri-faget.
+1. Ser ikke helt nytteverdien av plottet (linje 173-202) som benytter logaritme-funksjonen, da resultatet ikke er forklart.
+1. Har rettet analysen av boxplot. 
+Se hjelp-funksjonen til `geom_boxplot` for beskrivelse.
+
+Generelt sett har dere prøvd forskjellige plots, men de bør forklares/analyseres bedre for at dere skal kunne vise at dere forstår hva de betyr.
+Kunne kanskje hatt mer fokus på høyde/inntekt for å komme frem til en tydeligere konklusjon,
+I tillegg så burde øvrige funn (kjønn/alder/etc) nevnes i konklusjonen.
+
+Beklager lang liste, men håper dette er til hjelp når dere skal jobbe med eksamensoppgaven :)
