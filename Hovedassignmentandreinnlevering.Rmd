@@ -4,38 +4,40 @@ author:
 - Sofie Brynjelsen
 - Silje Marie Danielsen
 classoption: twoside
-frontsize: 12pt
+output:
+  html_document:
+    df_print: paged
 linestretch: 1.5
-output: 
-   html_notebook
+fontsize: 12pt
 lang: nb-NO
 scl: apa-no-ampersand.csl
-frontsize: 12pt
 ---
 
 
-```{r setup}
+```{r setup, message=FALSE, echo=FALSE}
+knitr::opts_chunk$set(message = FALSE, echo = FALSE)
 library(modelr)
 library(ggplot2)
 library(knitr)
 library(tinytex)
 library(tidyverse)
 library(ggpubr)
-
+options(scipen = 999)
 ```
 
 
-#Introduksjon
-I denne oppgaven vil vi i hovedsak se på om høyde påvirker inntekten. For å finne ut dette har vi tatt i bruk studien/datasettet kalt for modelr. Vi har også sett på andre variabler som kjønn og sivilstatus, for å finne ut om disse faktorene har en påvirkning på inntekten. 
+# Introduksjon
 
-#Statistikk
+I denne oppgaven vil vi i hovedsak se på om høyde påvirker inntekten. 
+For å finne ut dette har vi tatt i bruk studien/datasettet kalt for modelr. 
+Vi har også sett på andre variabler som kjønn og sivilstatus, for å finne ut om disse faktorene har en påvirkning på inntekten. 
 
-```{r my_data, cache=TRUE}
+# Statistikk
+
+```{r my_data}
 my_data <- modelr::heights
-names(my_data)
 ```
 
-#disruptiv statistikk
 ```{r}
 heights$heightInt<- cut(heights$height, breaks=8)
 kable(summary(heights[,1:4]))
@@ -44,17 +46,16 @@ kable(summary(heights[,1:4]))
 ```{r}
 kable(summary(heights[,5:9]))
 ```
+
 Vi velger å legge hovedvekt på sammenhengen mellom høyde og inntekt, samt se om sivilstatus og kjønn har en påvirking på inntekt. 
 Det er 3402 menn og 3604 kvinner som deltok i undersøkelsen.
 I kolonnen inntekt er gjennomsnittet relativt høyt forhold til medianen, kan forklares med at det er noen som tjener veldig mye, som utspiller til et høyt gjennomssnitt. 
 
+# Plots
 
-
-#Plots
 ```{r}
 ggplot(data=my_data, mapping=aes(x= height, y=income)) +
   geom_point()
-
 ```
   
 Her ser vi sammenhengen mellom høyde og inntekt. 
@@ -64,22 +65,28 @@ Observasjonen øverst i diagrammet illustrerer gjennomsnittslønnen til de som l
 
 
 ```{r}
-ggplot(data=my_data, mapping=aes(x= height, y=income)) +
-  geom_point()+
-  ylim(0, 300000)
+attach(my_data)
+hist(height, 
+     breaks = 20,
+     main = "Høydefrekvens",
+     xlab = "Inches",
+     ylab = "Frekvens")
 ```
-Her ser man hvordan histogrammet ser ut, dersom man ser bort i fra de som har den høyeste inntekten.
+Her ser man hvordan histogrammet ser ut. ~~dersom man ser bort i fra de som har den høyeste inntekten~~
 
-#Desnity plot
+# Desnity plot
+
 ```{r}
 ggplot(data=my_data)+
-  geom_density(aes(x=height), fill="darkgreen") 
+  geom_density(aes(x=height), 
+               fill="darkgreen") 
 ```
 I Density plotet, hvor man har brukt variabelen høyde, kan man se at den er tilnærmet lik normalfordelt.  
 
 ```{r}
 ggplot(data=my_data)+
-  geom_density(aes(x=income), fill="darkgreen")
+  geom_density(aes(x=income), 
+               fill="darkgreen")
  
 ```
 Videre ville vi se på varibelen inntekt i et density plot, hvor vi fant ut at denne ikke er normalfordelt.
@@ -98,34 +105,47 @@ hist(my_data_utvidet$income)
 hist(my_data_utvidet$logincome)
 
 ```
-Ettersom inntekt ikke var normalfordelt, har vi nå valgt å foreta en tranformasjon.
+Ettersom inntekt ikke var normalfordelt, har vi nå valgt å foreta en tranformasjon. 
 
-#Sammenligning av menn og kvinner
+# Sammenligning av menn og kvinner
+
 ```{r}
 ggplot()+
-  geom_point(data=my_data, mapping=aes(x = height, y = income, colour=factor(sex)))
+  geom_point(data=my_data, 
+             mapping=aes(x = height, 
+                         y = income, 
+                         colour=factor(sex)))
 
 ```
 
-I dette histogrammet har vi delt opp variablene kvinner og menn, for å se om det har en betydning på inntekt. Man kan se at der er flest menn på prikkene øverst i histogrammet og at det er de som har høyest lønn.
+I dette ~~histogrammet~~ plottet har vi delt opp variablene kvinner og menn, for å se om det har en betydning på inntekt. 
+Man kan se at der er flest menn på prikkene øverst i histogrammet og at det er de som har høyest lønn.
 
 
 ```{r}
 library(dplyr)
-my_data_fem <- my_data %>% dplyr::filter(sex=="female")
-my_data_male<- my_data %>% dplyr::filter(sex=="male")
+my_data_fem <- my_data %>% 
+  filter(sex=="female")
+my_data_male<- my_data %>% 
+  filter(sex=="male")
 
-ggmen<- ggplot(data=my_data_male, mapping=aes(x=height, y=income, colour=factor(sex)))+
+ggmen<- ggplot(data=my_data_male, 
+               mapping=aes(x=height, 
+                           y=income, 
+                           colour=factor(sex)))+
   geom_point()
-ggwomen<- ggplot(data=my_data_fem, mapping=(aes(x=height, y=income, colour=factor(sex))))+
+ggwomen<- ggplot(data=my_data_fem,
+                 mapping=(aes(x=height, 
+                              y=income, 
+                              colour=factor(sex))))+
   geom_point()
 
-ggarrange(ggmen, ggwomen, labels = c("ggmen", "ggwomen"), nrow=1)
-
-
+ggarrange(ggmen, ggwomen, 
+          labels = c("ggmen", "ggwomen"), 
+          nrow=1)
 ```
-I graf ggmen, er det flest menn i høyden 65 til 74.
-Ser på grafen til høyre ser vi at flertallet av kvinner har en høyde på 60 til 70. 
+I graf ggmen, er det flest menn i høyden 65 til 74. **år, inches, hva? - Forklar**
+Ser på grafen til høyre ser vi at flertallet av kvinner har en høyde på 60 til 70. **år, inches, hva? - Forklar**
 Man kan også se at det er flere menn enn kvinner som har høy inntekt. 
 
 
@@ -137,10 +157,13 @@ sex<-pull(my_data[,6])
 
 ```{r}
 #Regresjon
-ggplot(data=my_data, mapping=aes(x=height, y=income))+
+ggplot(data=my_data, 
+       mapping=aes(x=height, 
+                   y=income))+
   geom_point()+
 ylim(0,200000) +
-  geom_smooth(method="lm", se=FALSE)
+  geom_smooth(method="lm", 
+              se=FALSE)
 
 ```
 Her ser vi at høyde har en postiv korrelasjon på inntekt. 
@@ -148,18 +171,21 @@ Her ser vi at høyde har en postiv korrelasjon på inntekt.
 
 
 ```{r}
-View(my_data_filter)
 my_data_filter <- my_data %>% dplyr::filter(income<300000) %>%
 dplyr::filter(income>0) %>%
 dplyr::mutate(lnincome=log(income)) %>%
 dplyr::mutate(lnheight=log(height)) 
 
 
-q1 <- ggplot(data=my_data_filter, aes(x=height,y=income)) + 
+q1 <- ggplot(data=my_data_filter, 
+             aes(x=height,
+                 y=income)) + 
 geom_point() + 
 geom_jitter() +
 geom_smooth(method = "lm")
-q2 <- ggplot(data=my_data_filter, aes(x=lnheight,y=lnincome)) + 
+q2 <- ggplot(data=my_data_filter, 
+             aes(x=lnheight,
+                 y=lnincome)) + 
 geom_point() + 
 geom_jitter() +
 geom_smooth(method = "lm")
@@ -173,7 +199,8 @@ summary(model_1)
 summary(model_2)
 
 ```
-Den til høyre illustrerer prosentandel.
+Den til høyre illustrerer prosentandel. 
+**Prosentandel av hva?**
 
 
 
@@ -186,16 +213,15 @@ ggplot(box, mapping= aes(x=heightInt, y=income, colour=factor(sex)))+
 
 
 ```
-Boksene representerer 50% av observasjonene. 
+Boksene representerer onservasjonene mellom første og tredje kvartil. 
 Medianen er linjen som skjæreer gjennom boksen. 
-linjene som er vertikale, repsenterer minimum og maximun av lønnen og fra hver sin side rep.
+linjene som er vertikale, repsenterer 1.5% utover kvartilene.
 "Prikkene" er kalt for outliers og representerer de som har "uvanlig" høy eller lav inntekt i forhold til medianen. 
-box 1: når x er 52,56. 
-De fleste dataene er  innefor boksen, det vil si at standardavviket ikke er stort. 
-Det vil si at avstanden i lønnsintekt mellom mennesker på 1,52 ikke er stor. 
+box 1: når x er mellom 52 og 56 inches. 
 Medianen blir høyere, når høyden øker. 
 Det vil si lønnen øker jo høyere en blir.
-Ved å se på kjønn som en faktor, kan vi se at mange menn har høyre lønn en kvinner.
+Ved å se på kjønn som en faktor, kan vi se at det er relativt likt fordelt, men menn er generelt høyere.
+
 ```{r}
 box <- subset(heights, income > 0)
 ggplot(box, mapping= aes(x=heightInt, y=income, colour=factor(marital)))+
@@ -203,7 +229,7 @@ ggplot(box, mapping= aes(x=heightInt, y=income, colour=factor(marital)))+
   geom_boxplot()+
   ylim(0, 300000)
 ```
-Hvis vi sammenligner de to boxene kan vi se at de ligger høyt på inntekt er menn, og det er et høyt antall av dem som er skilte.
+Hvis vi sammenligner de to boxene kan vi se at mange av de som ligger høyt på inntekt er gift, men det er en jevn spredning.
 
 ```{r}
 my_data_adj <- my_data %>% dplyr::filter(income<300000 & income >0)
@@ -211,17 +237,15 @@ ggplot(data=my_data_adj)+
 facet_grid(sex ~marital)+
 geom_point(aes(x=age, y=income))
 ```
-Ved å ta i bruk facet_grid kan vi se på om alder og sivilstatus har noe å si for hvor mye man tjener. 
+Ved å ta i bruk *facet_grid* kan vi se på om alder og sivilstatus har noe å si for hvor mye man tjener. 
 Ut i fra dataene kan man se en sammenheng mellom inntekt og sivilstatus. 
-Det ser ut til at de som er single, gift eller skilt, har en høyere inntekt. 
-Vi kan også se at mange av de som har høy inntekt har en alder på 50+.
+Det ser ut til at de som er jevnt fordelt. 
+Vi kan også se at mange av de som har høy inntekt er jevnt fordelt da utvalgsgruppen har en begrenset aldersgrupper fra 48 til 56 år.
 
-#Resultater
+# Resultater
+
 ```{r}
 summary(lm(income~height, data=heights))
-
-
-
 ```
 En ekstra inch vil gi en inntektseøkning på $2981. 
 Vi kan se på at R-squerad er relatvit lavt, 4,7%. 
