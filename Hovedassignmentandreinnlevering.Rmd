@@ -22,14 +22,16 @@ library(knitr)
 library(tinytex)
 library(tidyverse)
 library(ggpubr)
-options(scipen = 999)
+# scipen lik 2 tror jeg er et fornuftig kompromiss
+#options(scipen = 999)
+options(scipen = 2)
 ```
 
 
 # Introduksjon
 
 I denne oppgaven vil vi i hovedsak se på om høyde påvirker inntekten. 
-For å finne ut dette har vi tatt i bruk studien/datasettet kalt for modelr. 
+For å finne ut dette har vi tatt i bruk studien/datasettet kalt *heights*  fra R pakken *modelr*. 
 Vi har også sett på andre variabler som kjønn og sivilstatus, for å finne ut om disse faktorene har en påvirkning på inntekten. 
 
 # Statistikk
@@ -39,17 +41,33 @@ my_data <- modelr::heights
 ```
 
 ```{r}
-heights$heightInt<- cut(heights$height, breaks=8)
-kable(summary(heights[,1:4]))
+# Over lager dere en kopi av heights (my_data) 
+# som er fornuftig.Dere bør lage nye variabler 
+# i denne slik at orginalen forblir urørt. Se 
+# nedenfor hvordan jeg ville gjort det vha. pipes
+# og tidyverse
+#heights$heightInt<- cut(heights$height, breaks=8)
+#kable(summary(heights[,1:4]))
+my_data <- my_data %>% 
+  mutate(
+    heightInt = cut_number(height, n = 8) 
+  )
+my_data %>% 
+  select(1:4) %>% 
+  summary() # %>%  kable()
 ```
 
 ```{r}
-kable(summary(heights[,5:9]))
+#kable(summary(heights[,5:9]))
+my_data %>% 
+# select by variable names  
+  select(marital:heightInt) %>% 
+  summary() # %>%  kable()
 ```
 
 Vi velger å legge hovedvekt på sammenhengen mellom høyde og inntekt, samt se om sivilstatus og kjønn har en påvirking på inntekt. 
 Det er 3402 menn og 3604 kvinner som deltok i undersøkelsen.
-I kolonnen inntekt er gjennomsnittet relativt høyt forhold til medianen, kan forklares med at det er noen som tjener veldig mye, som utspiller til et høyt gjennomssnitt. 
+I kolonnen inntekt er gjennomsnittet relativt høyt forhold til medianen. En forklaring på dette kan være at det er noen som tjener veldig mye. Dette øker gjennomsnittet, men ikke meridianen. 
 
 # Plots
 
@@ -65,61 +83,80 @@ Observasjonen øverst i diagrammet illustrerer gjennomsnittslønnen til de som l
 
 
 ```{r}
-attach(my_data)
-hist(height, 
-     breaks = 20,
-     main = "Høydefrekvens",
-     xlab = "Inches",
-     ylab = "Frekvens")
+# attach(my_data)
+# hist(height, 
+#      breaks = 20,
+#      main = "Høydefrekvens",
+#      xlab = "Inches",
+#      ylab = "Frekvens")
+my_data %>% 
+  ggplot(mapping = aes(x = height)) +
+  geom_histogram(bins = 30) + 
+  ggtitle("Høydefrekvens") + 
+  xlab("Inches") + 
+  ylab("Frekvens")
+
 ```
-Her ser man hvordan histogrammet ser ut. ~~dersom man ser bort i fra de som har den høyeste inntekten~~
+Her ser man hvordan histogrammet ser ut dersom man ser bort i fra de som har den høyeste inntekten.
 
 # Desnity plot
 
 ```{r}
-ggplot(data=my_data)+
-  geom_density(aes(x=height), 
-               fill="darkgreen") 
+# Jeg synes det gjør seg når fill er litt  gjennomsiktig
+# mappin = er unødvendig, men mye lettere å skjønne koden 
+# hvis en henter dokumentet frem om to år
+ggplot(data = my_data) +
+  geom_density(mapping = aes(x = height), 
+               fill = "darkgreen",
+               alpha = 0.3) 
 ```
 I Density plotet, hvor man har brukt variabelen høyde, kan man se at den er tilnærmet lik normalfordelt.  
 
 ```{r}
-ggplot(data=my_data)+
-  geom_density(aes(x=income), 
-               fill="darkgreen")
+ggplot(data = my_data)+
+  geom_density(mapping = aes(x = income), 
+               fill="darkgreen",
+               alpha = 0.3)
  
 ```
-Videre ville vi se på varibelen inntekt i et density plot, hvor vi fant ut at denne ikke er normalfordelt.
+Videre ville vi se på variabelen inntekt i et density plot.  Vi ser at denne neppe er normalfordelt.
  
-
 ```{r}
-
-ovr_grense <- 300000
-ned_grense <- 0
-my_data_utvidet <- my_data %>%
-  dplyr::filter(income>ned_grense) %>%
-  dplyr::filter(income<ovr_grense)%>%
-  dplyr::mutate(logincome=log(income))
-
-hist(my_data_utvidet$income)
-hist(my_data_utvidet$logincome)
-
+# ovr_grense <- 300000
+# ned_grense <- 0
+# Hvorfor ikke bare legge logincome til my_data?
+# logincome lik NA når income == 0
+my_data <- my_data %>%
+  mutate(logincome = ifelse(income == 0,
+                            NA,
+                            log(income)
+                            )
+  )
+g1 <- my_data %>% 
+  ggplot(mapping = aes(x = income)) + 
+  geom_histogram(bins = 30)
+g2 <- my_data %>% 
+  filter(!is.na(logincome)) %>% 
+  ggplot(mapping = aes(x = logincome)) + 
+  geom_histogram(bins = 30)
+ggarrange(g1, g2, nrow = 1, ncol = 2)
 ```
 Ettersom inntekt ikke var normalfordelt, har vi nå valgt å foreta en tranformasjon. 
 
 # Sammenligning av menn og kvinner
 
 ```{r}
-ggplot()+
-  geom_point(data=my_data, 
-             mapping=aes(x = height, 
+ggplot() +
+  geom_point(data = my_data, 
+             mapping = aes(x = height, 
                          y = income, 
-                         colour=factor(sex)))
-
+                         colour = factor(sex)
+                         )
+             )
 ```
 
-I dette ~~histogrammet~~ plottet har vi delt opp variablene kvinner og menn, for å se om det har en betydning på inntekt. 
-Man kan se at der er flest menn på prikkene øverst i histogrammet og at det er de som har høyest lønn.
+I dette plottet har vi delt opp variablene høyde og inntekt for gruppene kvinner og menn. Kjønn er kodet med farge, mens observasjonens plassering angir verdien for høyde og inntekt. 
+Man kan se at der er flest menn på prikkene øverst i plottet og at det er de som har høyest lønn.
 
 
 ```{r}

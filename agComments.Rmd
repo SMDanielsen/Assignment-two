@@ -1,0 +1,8 @@
+---
+title: "ag Comments"
+output: html_notebook
+---
+
+1.  Ikke bruk attach(). Det er veldig lett å bli forvirret. Benytter dere pipes og tidyverse så forsvinner også mye av hensikten med attach(). Se her for forklaring [To attach() or not attach(): that is the question**](<https://www.r-bloggers.com/2011/05/to-attach-or-not-attach-that-is-the-question/>)**
+
+2.  Dere blander noen ganger histogram og plot.
