@@ -6,3 +6,9 @@ output: html_notebook
 1.  Ikke bruk attach(). Det er veldig lett å bli forvirret. Benytter dere pipes og tidyverse så forsvinner også mye av hensikten med attach(). Se her for forklaring [To attach() or not attach(): that is the question**](<https://www.r-bloggers.com/2011/05/to-attach-or-not-attach-that-is-the-question/>)**
 
 2.  Dere blander noen ganger histogram og plot.
+
+3.  Ca. linje 121 skriver dere «I Density plotet, hvor man har brukt variabelen høyde, kan man se at den er tilnærmet lik normalfordelt.» Er dette riktig? Ser dere nøye på figuren ser dere et lite dalsøkk på toppen. Dette er et resultat av at høyde er satt sammen av to normalfordelte variabler (ca. 50/50 fordeling), nemlig høyde kvinner og høyde menn.
+
+4.  Bruk *punkter* istedenfor *prikker* . Det hører litt mer voksent ut ;-)
+
+5.  Dere lager mange unødvendige datasett. Sløser med minne, lager rot og gjør det lett å miste oversikten. Er det en variabel dere tror dere trenger mange ganger så lag den med mutate() og legg den til datasettet dere alt har. Er det en variabel dere bare trenger en gang, f.eks. i et plot, så lag den der og da i pipen med mutate() og plot den. Da er det ingen grunn til å ta vare på den.
